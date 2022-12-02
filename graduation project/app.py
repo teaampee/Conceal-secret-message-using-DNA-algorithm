@@ -59,30 +59,28 @@ def image_encrypt(im):
             # print(temp[i*2+1,j*2+1])
     return temp
 def image_decrypt(im):
-    # temp = np.zeros((im.shape[0]/2,im.shape[1]/2,im.shape[2]),np.uint8)
+    temp = np.zeros((int(im.shape[0]/2),int(im.shape[1]/2),im.shape[2]),np.uint8)
     for i in range(0,im.shape[0],2):
         for j in range(0,im.shape[1],2):
             r = ""
-            t_i = i/2
-            t_j = j/2
-            s = im[i,j]
-            print(s[0])
-            # r = r + chr(im[i/2+1,j/2,0])
-            # r = r + chr(im[i/2,j/2+1,0])
-            # r = r + chr(im[i/2+1,j/2+1,0])
-            # # g = ""
-            # g = g + chr(im[i/2,j/2,1])
-            # g = g + chr(im[i/2+1,j/2,1])
-            # g = g + chr(im[i/2,j/2+1,1])
-            # g = g + chr(im[i/2+1,j/2+1,1])
-            # b = ""
-            # b = b + chr(im[i/2,j/2,2])
-            # b = b + chr(im[i/2+1,j/2,2])
-            # b = b + chr(im[i/2,j/2+1,2])
-            # b = b + chr(im[i/2+1,j/2+1,2])
-           
-            
-            
+            r = r + chr(im[i,j,0])            
+            r = r + chr(im[i+1,j,0])
+            r = r + chr(im[i,j+1,0])
+            r = r + chr(im[i+1,j+1,0])
+            g = ""
+            g = g + chr(im[i,j,1])    
+            g = g + chr(im[i+1,j,1])
+            g = g + chr(im[i,j+1,1])
+            g = g + chr(im[i+1,j+1,1])
+            b = ""
+            b = b + chr(im[i,j,2])    
+            b = b + chr(im[i+1,j,2])
+            b = b + chr(im[i,j+1,2])
+            b = b + chr(im[i+1,j+1,2])   
+            r = dna2int(r)
+            g = dna2int(g)
+            b = dna2int(b)
+            temp[int(i/2),int(j/2)] = (r,g,b)
     return temp
 
                         
@@ -93,14 +91,20 @@ im1 = im.open('/home/ismail0w249/grad_project/graduation project/coolit.jpeg')
 p1 = np.asarray(im1) 
 
 # print(p1.shape[0] , p1.shape[1] , p1.shape[2])
-
+print(p1[1,3])
 test = image_encrypt(p1)
+print(test[100,0])
 im2 = im.fromarray(test, mode="RGB")
+print(im2.getpixel((0,100)))
 im2.save("siuu.png")
 im3 = im.open("siuu.png")
-p2 = np.asarray(im3)
-# test = image_decrypt(p2)
 
+p2 = np.asarray(im3)
+print(p2[100,0])
+test = image_decrypt(p2)
+print(test[1,3])
+im4 = im.fromarray(test, mode="RGB")
+im4.save("siuu2.png")
 # print(im2.getpixel((4,4)))
 # print(test.shape[0] , test.shape[1] , test.shape[2])
 # print(p1[4,4])
