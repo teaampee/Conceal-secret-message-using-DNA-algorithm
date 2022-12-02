@@ -27,16 +27,21 @@ def bits2dna(x):
             
 
 
-im1 = im.open('graduation project/coolit.jpeg')
-px = np.asarray(im1)
-test = np.zeros([4,4,3])
-print(px[4,4])
-px[4,4] = test[3,3]
-print(px[4,4])
+im1 = im.open('web/graduation project/coolit.jpeg')
+px = np.asarray(im1) 
 
+print(px.shape[0] , px.shape[1] , px.shape[2])
+
+test = np.zeros((px.shape[0]*2,px.shape[1]*2,px.shape[2]),np.uint8)
+
+print(test.shape[0] , test.shape[1] , test.shape[2])
+print(px[4,4])
+print(test[4,4])
+test[4,4] = px[4,4]
+print(test[4,4])
         
 
-ax = px[4,4]
+ax = test[4,4]
 g = eightbitbinary(ax[0])
 print(bits2dna(g))
 
@@ -48,6 +53,8 @@ bin_a = eightbitbinary(ax[1])
 print(bin_a)
 print(int(bin_a, 2)) 
 
+
+print("s")
 
 
 
