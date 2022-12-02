@@ -19,6 +19,19 @@ def bits2dna(x):
             dna += "c"
     
     return dna
+def dna2int(x):
+    num = ""
+    for i in range(4):
+        if x[i]  == "a" :
+            num = num + "00"
+        elif x[i]  == "t" :
+            num = num + "01"
+        elif x[i]  == "g" :
+            num = num + "10"
+        else :
+            num = num + "11"
+    
+    return int(num,2)
 
 def image_encrypt(im):
     temp = np.zeros((im.shape[0]*2,im.shape[1]*2,im.shape[2]),np.uint8)
@@ -45,25 +58,54 @@ def image_encrypt(im):
             # print(temp[i*2,j*2+1])
             # print(temp[i*2+1,j*2+1])
     return temp
+def image_decrypt(im):
+    # temp = np.zeros((im.shape[0]/2,im.shape[1]/2,im.shape[2]),np.uint8)
+    for i in range(0,im.shape[0],2):
+        for j in range(0,im.shape[1],2):
+            r = ""
+            t_i = i/2
+            t_j = j/2
+            s = im[i,j]
+            print(s[0])
+            # r = r + chr(im[i/2+1,j/2,0])
+            # r = r + chr(im[i/2,j/2+1,0])
+            # r = r + chr(im[i/2+1,j/2+1,0])
+            # # g = ""
+            # g = g + chr(im[i/2,j/2,1])
+            # g = g + chr(im[i/2+1,j/2,1])
+            # g = g + chr(im[i/2,j/2+1,1])
+            # g = g + chr(im[i/2+1,j/2+1,1])
+            # b = ""
+            # b = b + chr(im[i/2,j/2,2])
+            # b = b + chr(im[i/2+1,j/2,2])
+            # b = b + chr(im[i/2,j/2+1,2])
+            # b = b + chr(im[i/2+1,j/2+1,2])
+           
             
+            
+    return temp
+
                         
             
 
 
-im1 = im.open('coolit.jpeg')
-px = np.asarray(im1) 
+im1 = im.open('/home/ismail0w249/grad_project/graduation project/coolit.jpeg')
+p1 = np.asarray(im1) 
 
-# print(px.shape[0] , px.shape[1] , px.shape[2])
+# print(p1.shape[0] , p1.shape[1] , p1.shape[2])
 
-test = image_encrypt(px)
+test = image_encrypt(p1)
 im2 = im.fromarray(test, mode="RGB")
-im2.save("siuu.jpeg")
+im2.save("siuu.png")
+im3 = im.open("siuu.png")
+p2 = np.asarray(im3)
+# test = image_decrypt(p2)
 
 # print(im2.getpixel((4,4)))
 # print(test.shape[0] , test.shape[1] , test.shape[2])
-# print(px[4,4])
+# print(p1[4,4])
 # # print(test[4,4])
-# test[4,4] = px[4,4]
+# test[4,4] = p1[4,4]
 # # print(test[4,4])
         
 
@@ -80,7 +122,15 @@ im2.save("siuu.jpeg")
 # print(bin_a)
 # print(int(bin_a, 2)) 
 
-
+######################binary to dna test###################
+# x = 99
+# x = eightbitbinary(x)
+# print(x)
+# x = bits2dna(x)
+# print(x)
+# x = dna2int(x)
+# print(x)
+##########################################################
 # --------------------------------------
 # Creates an image memory from an object exporting the array interface (using the buffer protocol).
 
