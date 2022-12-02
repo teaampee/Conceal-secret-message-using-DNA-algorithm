@@ -87,7 +87,7 @@ def image_decrypt(im):
             
 
 
-im1 = im.open('/home/ismail0w249/grad_project/graduation project/coolit.jpeg')
+im1 = im.open('graduation project/coolit.jpeg')
 p1 = np.asarray(im1) 
 
 # print(p1.shape[0] , p1.shape[1] , p1.shape[2])
@@ -96,15 +96,15 @@ test = image_encrypt(p1)
 print(test[100,0])
 im2 = im.fromarray(test, mode="RGB")
 print(im2.getpixel((0,100)))
-im2.save("siuu.png")
-im3 = im.open("siuu.png")
+im2.save("graduation project/siuu.png")
+im3 = im.open("graduation project/siuu.png")
 
 p2 = np.asarray(im3)
 print(p2[100,0])
 test = image_decrypt(p2)
 print(test[1,3])
 im4 = im.fromarray(test, mode="RGB")
-im4.save("siuu2.png")
+im4.save("graduation project/siuu2.png")
 # print(im2.getpixel((4,4)))
 # print(test.shape[0] , test.shape[1] , test.shape[2])
 # print(p1[4,4])
