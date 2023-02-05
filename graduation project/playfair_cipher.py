@@ -268,8 +268,7 @@ def decrypt(cipherText,key):
     print("plainText:", plainText)
     return plainText
 
-cipher = encrypt("ball","monarchy")
-decrypt(cipher,"monarchy")
+
 
 
 
