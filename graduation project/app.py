@@ -1,6 +1,8 @@
 # importing pillow to load images and numpy for array handling 
 from PIL import Image as im
 import numpy as np
+from playfair_cipher import encrypt,decrypt
+
 
 #transform the output of the bin() function into an 8 bit string for example:
 # bin(3) = 0b11 makes that into 00000011 
@@ -101,9 +103,10 @@ def image_decrypt(im):
 
                         
             
+cipher = encrypt("ball","monarchy")
+decrypt(cipher,"monarchy")
 
-
-im1 = im.open('coolit.jpeg')
+im1 = im.open("grad_project\graduation project\coolit.jpeg")
 p1 = np.asarray(im1) 
 test = image_encrypt(p1)
 
