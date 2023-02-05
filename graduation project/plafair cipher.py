@@ -1,4 +1,3 @@
-# Python program to implement Playfair Cipher
 
 # Function to convert the string to lowercase
 
@@ -273,4 +272,4 @@ cipher = encrypt("ball","monarchy")
 decrypt(cipher,"monarchy")
 
 
-# This code is Contributed by Boda_Venkata_Nikith
+
