@@ -101,21 +101,55 @@ def image_decrypt(im):
             temp[int(i/2),int(j/2)] = (r,g,b)
     return temp
 
+def merge(image,text):
+    cols = image.shape[0]
+    rows = image.shape[1]
+    list1 = []
+    for i in range (0,len(text)):
+        randc = np.random.randint(0,cols)
+        randr = np.random.randint(0,rows)
+        list1.append(randc)
+        list1.append(randr)
+        list1.append(image[randc,randr,2])
+        image[randc,randr,2] = ord(text[i])
+        
+    return image,list1
+
+def unmerge(image,list1):
+    text= ""
+    for i in range(0,len(list1),3):
+        
+        text = text + chr(image[list1[i],list1[i+1],2])
+        image[list1[i],list1[i+1],2]= list1[i+2]
+    return image,text
+        
+
+    
+        
+    
+
+
+
+    
                         
             
 cipher = encrypt("ball","monarchy")
-decrypt(cipher,"monarchy")
+# decrypt(cipher,"monarchy")
 
 im1 = im.open("grad_project\graduation project\coolit.jpeg")
 p1 = np.asarray(im1) 
 test = image_encrypt(p1)
-
+test,list1 = merge(test,cipher)
 im2 = im.fromarray(test, mode="RGB")
 im2.save("encrypted_img.png")
 
 
 im3 = im.open("encrypted_img.png")
 p2 = np.asarray(im3)
+p2 = p2.copy()
+p2,text = unmerge(p2,list1)
 test = image_decrypt(p2)
+text = decrypt(text,"monarchy")
+print(text)
 im4 = im.fromarray(test, mode="RGB")
 im4.save("decryption_final.png")
