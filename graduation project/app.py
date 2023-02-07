@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
 from PIL import ImageTk,Image
-from pathlib import Path
 from dna_encryption import image_encrypt,image_decrypt
 from playfair_cipher import encrypt,decrypt
 import numpy as np
@@ -33,7 +32,7 @@ def unmerge(image,list1):
 
 
 def select_file():
-    root.filename = filedialog.askopenfilename(initialdir=Path.cwd(),title="select an image to encrypt")
+    root.filename = filedialog.askopenfilename(initialdir=os.path.dirname(__file__),title="select an image to encrypt")
     return root.filename
 def btn_encrypt():
     top = tk.Toplevel()
