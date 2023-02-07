@@ -5,6 +5,9 @@ from pathlib import Path
 from dna_encryption import image_encrypt,image_decrypt
 from playfair_cipher import encrypt,decrypt
 import numpy as np
+import os
+
+
 
 def merge(image,text):
     cols = image.shape[0]
@@ -52,7 +55,7 @@ def btn_encrypt():
     cipher = encrypt(msg,key)
     test,list1 = merge(test,cipher)
     im2 = Image.fromarray(test, mode="RGB")
-    encrypted_image_name = "encrypted_img.png"
+    encrypted_image_name = os.path.dirname(__file__)+"\Images\encrypted_img.png"
     im2.save(encrypted_image_name)
     im2_label = Image.open(encrypted_image_name)
     im2_label = im2_label.resize((300,200))
@@ -60,9 +63,8 @@ def btn_encrypt():
     label3 = tk.Label(top,image=im2_label).grid(column=0,row=3)
     label = tk.Label(top,text="encrypted Image :").grid(column=0,row=2)
 
-
     # decreption::::::::::::::::::::::::::::::::::::::::
-    im3 = Image.open("encrypted_img.png")
+    im3 = Image.open(encrypted_image_name)
     p2 = np.asarray(im3)
     p2 = p2.copy()
     p2,text = unmerge(p2,list1)
@@ -70,7 +72,7 @@ def btn_encrypt():
     text = decrypt(text,key)
     print(text)
     im4 = Image.fromarray(p2, mode="RGB")
-    decryption_image_name = "decryption_final.png"
+    decryption_image_name = os.path.dirname(__file__)+"\Images\decryption_final.png"
     im4.save(decryption_image_name)
     im4_label = Image.open(decryption_image_name)
     im4_label = im4_label.resize((300,200))
