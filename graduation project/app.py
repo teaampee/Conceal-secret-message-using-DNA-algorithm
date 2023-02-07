@@ -37,7 +37,9 @@ def btn_encrypt():
     global im1,im2,im1_label,im2_label,im4_label
     # encryption::::::::::::::::::::::::::::::::::::::::::::::::::
     loc = select_file()
-    im1_label = ImageTk.PhotoImage(Image.open(loc))
+    im1_label = Image.open(loc)
+    im1_label = im1_label.resize((300,200))
+    im1_label = ImageTk.PhotoImage(im1_label)
     label2 = tk.Label(top,image=im1_label).grid(column=0,row=1)
     label = tk.Label(top,text="original Image :").grid(column=0,row=0)
     im1 = Image.open(loc)
@@ -52,7 +54,9 @@ def btn_encrypt():
     im2 = Image.fromarray(test, mode="RGB")
     encrypted_image_name = "encrypted_img.png"
     im2.save(encrypted_image_name)
-    im2_label = ImageTk.PhotoImage(Image.open(encrypted_image_name))
+    im2_label = Image.open(encrypted_image_name)
+    im2_label = im2_label.resize((300,200))
+    im2_label = ImageTk.PhotoImage(im2_label)
     label3 = tk.Label(top,image=im2_label).grid(column=0,row=3)
     label = tk.Label(top,text="encrypted Image :").grid(column=0,row=2)
 
@@ -68,10 +72,12 @@ def btn_encrypt():
     im4 = Image.fromarray(p2, mode="RGB")
     decryption_image_name = "decryption_final.png"
     im4.save(decryption_image_name)
-    im4_label = ImageTk.PhotoImage(Image.open(decryption_image_name))
+    im4_label = Image.open(decryption_image_name)
+    im4_label = im4_label.resize((300,200))
+    im4_label = ImageTk.PhotoImage(im4_label)
     label = tk.Label(top,text="decrypted Image :").grid(column=1,row=0)
     label4= tk.Label(top,image=im4_label).grid(column=1,row=1)
-    label = tk.Label(top,text="secret message: "+msg+"\ncipher key: "+key+"\ndecrypted text :"+text).grid(column=1,row=3)
+    label = tk.Label(top,text="secret message: "+msg+"\ncipher key: "+key+"\ndecrypted text: "+text).grid(column=1,row=3)
 
 
 # main program:::::::::::::::::::::::::::::::::::::::::::
