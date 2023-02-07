@@ -1,105 +1,10 @@
-# importing pillow to load images and numpy for array handling 
-from PIL import Image as im
-import numpy as np
+import tkinter as tk
+from tkinter import filedialog
+from PIL import ImageTk,Image
+from pathlib import Path
+from dna_encryption import image_encrypt,image_decrypt
 from playfair_cipher import encrypt,decrypt
-
-
-#transform the output of the bin() function into an 8 bit string for example:
-# bin(3) = 0b11 makes that into 00000011 
-# to prepare it for handling the DNA encryption function()
-def eightbitbinary(x):
-    temp = bin(x)
-    s = temp[2:]
-    for i in range(0,10-len(temp)):
-        s = "0" + s
-    return s
-# transforms the 8 bits binary number into DNA encryption string
-# where (00 = a,01 = t,10 = g,11 = c ),, so for example:
-# 00000011 => 00,00,00,11 => a,a,a,c => aaac
-def bits2dna(x):
-    dna=""
-    for i in range(0,8,2):
-        if x[i] + x[i+1] == "00" :
-            dna += "a"
-        elif x[i] + x[i+1] == "01" :
-            dna += "t"
-        elif x[i] + x[i+1] == "10" :
-            dna += "g"
-        else :
-            dna += "c"
-    
-    return dna
-# transorm the DNA string back into an integer
-def dna2int(x):
-    num = ""
-    for i in range(4):
-        if x[i]  == "a" :
-            num = num + "00"
-        elif x[i]  == "t" :
-            num = num + "01"
-        elif x[i]  == "g" :
-            num = num + "10"
-        else :
-            num = num + "11"
-    
-    return int(num,2)
-# encrypts the image using the DNA function()
-# creates a new array that is double the size of the original image
-# goes through the pixels gets their RGB values 
-# transform the values of the RGB into a 4 letter string using the dna encryption function()
-# for example 3 = aaac
-# for every letter in the string it we get its numeric value in ASCII using ord()
-# and we put these 4 numbers as seperate value for RGB in 4 neighboring pixels in the new array
-
-def image_encrypt(im):
-    temp = np.zeros((im.shape[0]*2,im.shape[1]*2,im.shape[2]),np.uint8)
-    for i in range(0,im.shape[0]):
-        for j in range(0,im.shape[1]):
-            temprgb = im[i,j]
-            r = temprgb[0]
-            r = eightbitbinary(r)
-            r = bits2dna(r)
-            g = temprgb[1]
-            g = eightbitbinary(g)
-            g = bits2dna(g)
-            b = temprgb[2]  
-            b = eightbitbinary(b)
-            b = bits2dna(b)
-            temp[i*2,j*2]= (ord(r[0]),ord(g[0]),ord(b[0]))
-            temp[i*2+1,j*2]= (ord(r[1]),ord(g[1]),ord(b[1]))
-            temp[i*2,j*2+1]= (ord(r[2]),ord(g[2]),ord(b[2]))
-            temp[i*2+1,j*2+1]= (ord(r[3]),ord(g[3]),ord(b[3]))
-
-    return temp
-# decrypts the encrypted image
-# by getting the values of the RGB in the 4 neighboring pixels
-# transform them back into letters
-# adds them back into a string 
-# then transform them back into integers using the dna2int() function
-def image_decrypt(im):
-    temp = np.zeros((int(im.shape[0]/2),int(im.shape[1]/2),im.shape[2]),np.uint8)
-    for i in range(0,im.shape[0],2):
-        for j in range(0,im.shape[1],2):
-            r = ""
-            r = r + chr(im[i,j,0])            
-            r = r + chr(im[i+1,j,0])
-            r = r + chr(im[i,j+1,0])
-            r = r + chr(im[i+1,j+1,0])
-            g = ""
-            g = g + chr(im[i,j,1])    
-            g = g + chr(im[i+1,j,1])
-            g = g + chr(im[i,j+1,1])
-            g = g + chr(im[i+1,j+1,1])
-            b = ""
-            b = b + chr(im[i,j,2])    
-            b = b + chr(im[i+1,j,2])
-            b = b + chr(im[i,j+1,2])
-            b = b + chr(im[i+1,j+1,2])   
-            r = dna2int(r)
-            g = dna2int(g)
-            b = dna2int(b)
-            temp[int(i/2),int(j/2)] = (r,g,b)
-    return temp
+import numpy as np
 
 def merge(image,text):
     cols = image.shape[0]
@@ -122,34 +27,74 @@ def unmerge(image,list1):
         text = text + chr(image[list1[i],list1[i+1],2])
         image[list1[i],list1[i+1],2]= list1[i+2]
     return image,text
-        
-
-    
-        
-    
 
 
+def select_file():
+    root.filename = filedialog.askopenfilename(initialdir=Path.cwd(),title="select an image to encrypt")
+    return root.filename
+def btn_encrypt():
+    top = tk.Toplevel()
+    global im1,im2,im1_label,im2_label,im4_label
+    # encryption::::::::::::::::::::::::::::::::::::::::::::::::::
+    loc = select_file()
+    im1_label = ImageTk.PhotoImage(Image.open(loc))
+    label2 = tk.Label(top,image=im1_label).grid(column=0,row=1)
+    label = tk.Label(top,text="original Image :").grid(column=0,row=0)
+    im1 = Image.open(loc)
+    p1 = np.asarray(im1) 
+    test = image_encrypt(p1)
+    msg = enrty_1.get()
+    # label = tk.Label(top,text="secret message: "+msg).grid(column=1,row=2)
+    key = enrty_2.get()
+    # label = tk.Label(top,text="cipher key: "+key).grid(column=1,row=3)
+    cipher = encrypt(msg,key)
+    test,list1 = merge(test,cipher)
+    im2 = Image.fromarray(test, mode="RGB")
+    encrypted_image_name = "encrypted_img.png"
+    im2.save(encrypted_image_name)
+    im2_label = ImageTk.PhotoImage(Image.open(encrypted_image_name))
+    label3 = tk.Label(top,image=im2_label).grid(column=0,row=3)
+    label = tk.Label(top,text="encrypted Image :").grid(column=0,row=2)
 
-    
-                        
-            
-cipher = encrypt("ball","monarchy")
-# decrypt(cipher,"monarchy")
 
-im1 = im.open("grad_project\graduation project\coolit.jpeg")
-p1 = np.asarray(im1) 
-test = image_encrypt(p1)
-test,list1 = merge(test,cipher)
-im2 = im.fromarray(test, mode="RGB")
-im2.save("encrypted_img.png")
+    # decreption::::::::::::::::::::::::::::::::::::::::
+    im3 = Image.open("encrypted_img.png")
+    p2 = np.asarray(im3)
+    p2 = p2.copy()
+    p2,text = unmerge(p2,list1)
+    p2 = image_decrypt(p2)
+    text = decrypt(text,key)
+    print(text)
+    im4 = Image.fromarray(p2, mode="RGB")
+    decryption_image_name = "decryption_final.png"
+    im4.save(decryption_image_name)
+    im4_label = ImageTk.PhotoImage(Image.open(decryption_image_name))
+    label = tk.Label(top,text="decrypted Image :").grid(column=1,row=0)
+    label4= tk.Label(top,image=im4_label).grid(column=1,row=1)
+    label = tk.Label(top,text="secret message: "+msg+"\ncipher key: "+key+"\ndecrypted text :"+text).grid(column=1,row=3)
 
 
-im3 = im.open("encrypted_img.png")
-p2 = np.asarray(im3)
-p2 = p2.copy()
-p2,text = unmerge(p2,list1)
-test = image_decrypt(p2)
-text = decrypt(text,"monarchy")
-print(text)
-im4 = im.fromarray(test, mode="RGB")
-im4.save("decryption_final.png")
+# main program:::::::::::::::::::::::::::::::::::::::::::
+root = tk.Tk()
+root.title('DNA encryption graduation project')
+
+# root.geometry("800x600")
+
+mylabel = tk.Label(root, text="Select an image to be encrypted")
+mylabel.grid(column=0,pady=5)
+# im1 = ImageTk.PhotoImage(Image.open("decryption_final.png"))
+# label1 =  tk.Label(root, image=im1)
+# label1.pack()
+
+button1 = tk.Button(root, text="Encrypt", padx= 30, command=btn_encrypt)
+button1.grid(column=0)
+mylabel = tk.Label(root, text="Enter secret message: ").grid(column=0,pady=5)
+enrty_1= tk.Entry(root,width=40)
+enrty_1.grid(column=0)
+mylabel = tk.Label(root, text="Enter playfair cipher key: ").grid(column=0,pady=5)
+enrty_2= tk.Entry(root,width=40)
+enrty_2.grid(column=0)
+
+
+
+root.mainloop()
