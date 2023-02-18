@@ -1,14 +1,10 @@
 
 # Function to convert the string to lowercase
-
-
-def toLowerCase(text):
+def lowerCase(text):
 	return text.lower()
 
 # Function to remove all spaces in a string
-
-
-def removeSpaces(text):
+def rmSpaces(text):
 	newText = ""
 	for i in text:
 		if i == " ":
@@ -19,8 +15,6 @@ def removeSpaces(text):
 
 # Function to group 2 elements of a string
 # as a list element
-
-
 def Diagraph(text):
 	Diagraph = []
 	group = 0
@@ -92,7 +86,7 @@ def generateKeyTable(word):
     return matrix
 
 
-def search(mat, element):
+def findAxis(mat, element):
 	for i in range(5):
 		for j in range(5):
 			if(mat[i][j] == element):
@@ -185,8 +179,8 @@ def encryptByPlayfairCipher(Matrix, plainList):
 		c1 = 0
 		c2 = 0
         
-		ele1_x, ele1_y = search(Matrix, plainList[i][0])
-		ele2_x, ele2_y = search(Matrix, plainList[i][1])
+		ele1_x, ele1_y = findAxis(Matrix, plainList[i][0])
+		ele2_x, ele2_y = findAxis(Matrix, plainList[i][1])
         
 		if ele1_x == ele2_x:
 			c1, c2 = encrypt_RowRule(Matrix, ele1_x, ele1_y, ele2_x, ele2_y)
@@ -207,8 +201,8 @@ def decryptByPlayfairCipher(Matrix, ciphertext):
 		c1 = 0
 		c2 = 0
         
-		ele1_x, ele1_y = search(Matrix, ciphertext[i][0])
-		ele2_x, ele2_y = search(Matrix, ciphertext[i][1])
+		ele1_x, ele1_y = findAxis(Matrix, ciphertext[i][0])
+		ele2_x, ele2_y = findAxis(Matrix, ciphertext[i][1])
         
 		if ele1_x == ele2_x:
 			c1, c2 = decrypt_RowRule(Matrix, ele1_x, ele1_y, ele2_x, ele2_y)
@@ -225,14 +219,14 @@ def decryptByPlayfairCipher(Matrix, ciphertext):
 
 def encrypt(text_Plain,key):
 
-    text_Plain = removeSpaces(toLowerCase(text_Plain))
+    text_Plain = rmSpaces(lowerCase(text_Plain))
     PlainTextList = Diagraph(FillerLetter(text_Plain))
     if len(PlainTextList[-1]) != 2:
         PlainTextList[-1] = PlainTextList[-1]+'z'
 
 
     print("Key text:", key)
-    key = toLowerCase(key)
+    key = lowerCase(key)
     Matrix = generateKeyTable(key)
 
     print("Plain Text:", text_Plain)
@@ -245,12 +239,12 @@ def encrypt(text_Plain,key):
     return CipherText
 
 def decrypt(cipherText,key):
-    cipherText = removeSpaces(toLowerCase(cipherText))
+    cipherText = rmSpaces(lowerCase(cipherText))
     cipherTextList = Diagraph(cipherText)
 
 
     print("Key text:", key)
-    key = toLowerCase(key)
+    key = lowerCase(key)
     Matrix = generateKeyTable(key)
 
     print("cipher Text:", cipherText)
