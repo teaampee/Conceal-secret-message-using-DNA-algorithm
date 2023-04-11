@@ -1,33 +1,69 @@
 import tkinter as tk
 from tkinter import filedialog
 from PIL import ImageTk,Image
-from dna_encryption import image_encrypt,image_decrypt
+from dna_encryption import image_encrypt,image_decrypt,eightbitbinary
 from playfair_cipher import encrypt,decrypt
 import numpy as np
 import os
 
-
+# [16, 18, 21, 34, 39, 50, 60, 68, 77, 84, 90, 102, 106, 120, 135, 136] mb used later
 
 def merge(image,text):
+    # using the magic(4) in matlab to create a matrix each value in that matrix determine how far is the next pixel in the merging technique
+    key_matrix = np.array([16,2,3,13,5,11,10,8,9,7,6,12,4,14,15,1])    
     cols = image.shape[0]
     rows = image.shape[1]
-    list1 = []
+    if(len(text)> 255):
+        print("char limit 255")
+        return
+    image[0,0,2] = len(text)
+    position = 0
     for i in range (0,len(text)):
-        randc = np.random.randint(0,cols)
-        randr = np.random.randint(0,rows)
-        list1.append(randc)
-        list1.append(randr)
-        list1.append(image[randc,randr,2])
-        image[randc,randr,2] = ord(text[i])
+        s = i%16
+        position += key_matrix[s]
+        row = int(position / cols)
+        col = position % cols
+        char = eightbitbinary(ord(text[i]))
+        red = eightbitbinary(image[row,col,0])
+        red = list(red)
+        red[6:8] = char[0:2]
+        red = "".join(red)
+        image[row,col,0] = int(red,2)
+        green = eightbitbinary(image[row,col,1])
+        green = list(green)
+        green[6:8] = char[2:4]
+        green = "".join(green)
+        image[row,col,1] = int(green,2)
+        blue = eightbitbinary(image[row,col,2])
+        blue = list(blue)
+        blue[4:8] = char[4:8]
+        blue = "".join(blue)
+        image[row,col,2] = int(blue,2)
         
-    return image,list1
+    return image
 
-def unmerge(image,list1):
+def unmerge(image):
+    # using the magic(4) in matlab to create a matrix each value in that matrix determine how far is the next pixel in the merging technique
+    key_matrix = np.array([16,2,3,13,5,11,10,8,9,7,6,12,4,14,15,1]) 
+    cols = image.shape[0]
     text= ""
-    for i in range(0,len(list1),3):
+    position = 0
+    for i in range (0,image[0,0,2]):
+        s = i%16
+        position += key_matrix[s]
+        row = int(position / cols)
+        col = position % cols
+        char = ""
+        temp = eightbitbinary(image[row,col,0])
+        char += temp[6:8]
+        temp = eightbitbinary(image[row,col,1])
+        char += temp[6:8]
+        temp = eightbitbinary(image[row,col,2])
+        char += temp[4:8]
+        char = int(char,2)
+        text += chr(char)
         
-        text = text + chr(image[list1[i],list1[i+1],2])
-        image[list1[i],list1[i+1],2]= list1[i+2]
+    
     return image,text
 
 
@@ -52,7 +88,7 @@ def btn_encrypt():
     key = enrty_2.get()
     # label = tk.Label(top,text="cipher key: "+key).grid(column=1,row=3)
     cipher = encrypt(msg,key)
-    test,list1 = merge(test,cipher)
+    test = merge(test,cipher)
     im2 = Image.fromarray(test, mode="RGB")
     dirtemp = os.path.dirname(__file__)
     encrypted_image_name = os.path.join(dirtemp,"encrypted_img"+".png")
@@ -67,7 +103,7 @@ def btn_encrypt():
     im3 = Image.open(encrypted_image_name)
     p2 = np.asarray(im3)
     p2 = p2.copy()
-    p2,text = unmerge(p2,list1)
+    p2,text = unmerge(p2)
     p2 = image_decrypt(p2)
     text = decrypt(text,key)
     print(text)

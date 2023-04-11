@@ -2,8 +2,6 @@
 from PIL import Image as im
 import numpy as np
 
-
-
 #transform the output of the bin() function into an 8 bit string for example:
 # bin(3) = 0b11 makes that into 00000011 
 # to prepare it for handling the DNA encryption function()
