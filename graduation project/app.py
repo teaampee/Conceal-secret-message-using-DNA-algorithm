@@ -11,18 +11,28 @@ import os
 def merge(image,text):
     # using the magic(4) in matlab to create a matrix each value in that matrix determine how far is the next pixel in the merging technique
     key_matrix = np.array([16,2,3,13,5,11,10,8,9,7,6,12,4,14,15,1])    
-    cols = image.shape[0]
-    rows = image.shape[1]
-    if(len(text)> 255):
-        print("char limit 255")
-        return
-    image[0,0,2] = len(text)
+    cols = image.shape[1]
+    rows = image.shape[0]
+    text_length= len(text)
+    s = text_length%16
+    su = 0
+    for i in range(0,s):
+        su += key_matrix[s]
+    su = (int(text_length/16)*136) + su 
+    # print(su)   
+    # print(rows,cols)
+    if(su > (rows*cols)-1):
+        print("the image can't handle that many characters")
+        return image
     position = 0
-    for i in range (0,len(text)):
+    for i in range (0,text_length):
         s = i%16
         position += key_matrix[s]
         row = int(position / cols)
         col = position % cols
+        # print(i,",",position)
+        # print(row,rows)
+        # print(col,cols)
         char = eightbitbinary(ord(text[i]))
         red = eightbitbinary(image[row,col,0])
         red = list(red)
@@ -39,16 +49,37 @@ def merge(image,text):
         blue[4:8] = char[4:8]
         blue = "".join(blue)
         image[row,col,2] = int(blue,2)
-        
+    i += 1
+    s = i%16
+    position += key_matrix[s]
+    row = int(position / cols)
+    col = position % cols
+    char = eightbitbinary(ord("j"))
+    red = eightbitbinary(image[row,col,0])
+    red = list(red)
+    red[6:8] = char[0:2]
+    red = "".join(red)
+    image[row,col,0] = int(red,2)
+    green = eightbitbinary(image[row,col,1])
+    green = list(green)
+    green[6:8] = char[2:4]
+    green = "".join(green)
+    image[row,col,1] = int(green,2)
+    blue = eightbitbinary(image[row,col,2])
+    blue = list(blue)
+    blue[4:8] = char[4:8]
+    blue = "".join(blue)
+    image[row,col,2] = int(blue,2)
     return image
 
 def unmerge(image):
     # using the magic(4) in matlab to create a matrix each value in that matrix determine how far is the next pixel in the merging technique
     key_matrix = np.array([16,2,3,13,5,11,10,8,9,7,6,12,4,14,15,1]) 
-    cols = image.shape[0]
+    cols = image.shape[1]
     text= ""
     position = 0
-    for i in range (0,image[0,0,2]):
+    i = 0
+    while True:   
         s = i%16
         position += key_matrix[s]
         row = int(position / cols)
@@ -61,10 +92,13 @@ def unmerge(image):
         temp = eightbitbinary(image[row,col,2])
         char += temp[4:8]
         char = int(char,2)
-        text += chr(char)
-        
+        char = chr(char)
+        if(char == "j"):
+            return image,text
+        text += char
+        i += 1
     
-    return image,text
+    # return image,text
 
 
 def select_file():
