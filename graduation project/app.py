@@ -13,26 +13,25 @@ def merge(image,text):
     key_matrix = np.array([16,2,3,13,5,11,10,8,9,7,6,12,4,14,15,1])    
     cols = image.shape[1]
     rows = image.shape[0]
-    text_length= len(text)
-    s = text_length%16
+    text_length = len(text)
+    # section of code to test out if the image can handle the inputed text
+    s = (text_length+1)%16
     su = 0
     for i in range(0,s):
-        su += key_matrix[s]
+        su += key_matrix[i]
     su = (int(text_length/16)*136) + su 
-    # print(su)   
-    # print(rows,cols)
     if(su > (rows*cols)-1):
-        print("the image can't handle that many characters")
+        print("ERROR/////: the image can't handle that many characters")
         return image
     position = 0
+    # hiding the in the lower bit of the color values (8-bits) the least two bits for Red and Green, 4 least bits in the Blue color coz in reality the eye only sees the blue color about 20 times less than red and green
+    # a simple for-loop for hiding the text than the same code to put the letter "j" as a stop sign for the merging technique
     for i in range (0,text_length):
         s = i%16
         position += key_matrix[s]
         row = int(position / cols)
         col = position % cols
-        # print(i,",",position)
-        # print(row,rows)
-        # print(col,cols)
+        # print(i,",",position,",row:",row,",",rows,",col",col,",",cols)
         char = eightbitbinary(ord(text[i]))
         red = eightbitbinary(image[row,col,0])
         red = list(red)
@@ -54,6 +53,7 @@ def merge(image,text):
     position += key_matrix[s]
     row = int(position / cols)
     col = position % cols
+    # print(i,",",position,",row:",row,",",rows,",col",col,",",cols)
     char = eightbitbinary(ord("j"))
     red = eightbitbinary(image[row,col,0])
     red = list(red)
@@ -73,7 +73,6 @@ def merge(image,text):
     return image
 
 def unmerge(image):
-    # using the magic(4) in matlab to create a matrix each value in that matrix determine how far is the next pixel in the merging technique
     key_matrix = np.array([16,2,3,13,5,11,10,8,9,7,6,12,4,14,15,1]) 
     cols = image.shape[1]
     text= ""
@@ -98,7 +97,6 @@ def unmerge(image):
         text += char
         i += 1
     
-    # return image,text
 
 
 def select_file():
