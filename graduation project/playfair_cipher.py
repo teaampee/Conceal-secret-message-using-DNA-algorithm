@@ -220,6 +220,7 @@ def decryptByPlayfairCipher(Matrix, ciphertext):
 def encrypt(text_Plain,key):
 
     text_Plain = rmSpaces(lowerCase(text_Plain))
+    text_Plain = text_Plain.replace("j","i")
     PlainTextList = Diagraph(FillerLetter(text_Plain))
     if len(PlainTextList[-1]) != 2:
         PlainTextList[-1] = PlainTextList[-1]+'z'
