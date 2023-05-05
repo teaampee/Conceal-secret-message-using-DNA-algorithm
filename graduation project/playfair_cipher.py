@@ -228,6 +228,7 @@ def encrypt(text_Plain,key):
 
     print("Key text:", key)
     key = lowerCase(key)
+    key = key.replace("j","i")
     Matrix = generateKeyTable(key)
 
     print("Plain Text:", text_Plain)
