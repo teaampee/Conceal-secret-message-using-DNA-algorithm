@@ -37,10 +37,32 @@ def dna2int(x):
             num = num + "01"
         elif x[i]  == "g" :
             num = num + "10"
-        else :
+        elif x[i] == "c" :
             num = num + "11"
+        else:
+            num = num + "10"
     
     return int(num,2)
+
+# function to implement the compliment the DNA nitrogenous bases as in their natural habit to bond in a specific pairs A-T, G-C.. for example if we get an A we swap it with a T
+def dna_complement(x):
+    temp = ""
+    for element in x:
+        if element == "a":
+            temp += "t"
+        elif element == "t":
+            temp += "a"
+        elif element == "c":
+            temp += "g"
+        elif element == "g":
+            temp += "c"
+        else: 
+            temp += element
+        
+    return temp
+    
+
+
 # encrypts the image using the DNA function()
 # creates a new array that is double the size of the original image
 # goes through the pixels gets their RGB values 
@@ -57,12 +79,15 @@ def image_encrypt(im):
             r = temprgb[0]
             r = eightbitbinary(r)
             r = bits2dna(r)
+            r = dna_complement(r)
             g = temprgb[1]
             g = eightbitbinary(g)
             g = bits2dna(g)
+            g = dna_complement(g)
             b = temprgb[2]  
             b = eightbitbinary(b)
             b = bits2dna(b)
+            b = dna_complement(b)
             temp[i*2,j*2]= (ord(r[0]),ord(g[0]),ord(b[0]))
             temp[i*2+1,j*2]= (ord(r[1]),ord(g[1]),ord(b[1]))
             temp[i*2,j*2+1]= (ord(r[2]),ord(g[2]),ord(b[2]))
@@ -79,20 +104,23 @@ def image_decrypt(im):
     for i in range(0,im.shape[0],2):
         for j in range(0,im.shape[1],2):
             r = ""
-            r = r + chr(im[i,j,0])            
+            r = r + chr(im[i,j,0])         
             r = r + chr(im[i+1,j,0])
             r = r + chr(im[i,j+1,0])
             r = r + chr(im[i+1,j+1,0])
+            r = dna_complement(r)
             g = ""
-            g = g + chr(im[i,j,1])    
+            g = g + chr(im[i,j,1]) 
             g = g + chr(im[i+1,j,1])
             g = g + chr(im[i,j+1,1])
             g = g + chr(im[i+1,j+1,1])
+            g = dna_complement(g)
             b = ""
-            b = b + chr(im[i,j,2])    
+            b = b + chr(im[i,j,2])
             b = b + chr(im[i+1,j,2])
             b = b + chr(im[i,j+1,2])
-            b = b + chr(im[i+1,j+1,2])   
+            b = b + chr(im[i+1,j+1,2]) 
+            b = dna_complement(b)
             r = dna2int(r)
             g = dna2int(g)
             b = dna2int(b)
