@@ -102,7 +102,7 @@ def unmerge(image):
 def select_file():
     root.filename = filedialog.askopenfilename(initialdir=os.path.dirname(__file__),title="select an image to encrypt")
     return root.filename
-def btn_encrypt():
+def btn_encrypt(mode):
     top = tk.Toplevel()
     global im1,im2,im1_label,im2_label,im4_label
     # encryption::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -113,14 +113,26 @@ def btn_encrypt():
     label2 = tk.Label(top,image=im1_label).grid(column=0,row=1)
     label = tk.Label(top,text="original Image :").grid(column=0,row=0)
     im1 = Image.open(loc)
-    p1 = np.asarray(im1) 
-    test = image_encrypt(p1)
-    msg = enrty_1.get()
-    # label = tk.Label(top,text="secret message: "+msg).grid(column=1,row=2)
-    key = enrty_2.get()
-    # label = tk.Label(top,text="cipher key: "+key).grid(column=1,row=3)
-    cipher = encrypt(msg,key)
-    test = merge(test,cipher)
+    p1 = np.asarray(im1)
+    if mode == 0:
+        test = image_encrypt(p1)
+        msg = enrty_1.get()
+        # label = tk.Label(top,text="secret message: "+msg).grid(column=1,row=2)
+        key = enrty_2.get()
+        # label = tk.Label(top,text="cipher key: "+key).grid(column=1,row=3)
+        cipher = encrypt(msg,key)
+        test = merge(test,cipher)
+    elif mode == 1:
+        test = image_encrypt(p1)
+    elif mode == 2:
+        test = p1.copy()
+        msg = enrty_1.get()
+        key = enrty_2.get()
+        cipher = encrypt(msg,key)
+        test = merge(test,cipher)
+    else:
+        print("error encrypt mode select input")
+    
     im2 = Image.fromarray(test, mode="RGB")
     dirtemp = os.path.dirname(__file__)
     encrypted_image_name = os.path.join(dirtemp,"encrypted_img"+".png")
@@ -135,10 +147,20 @@ def btn_encrypt():
     im3 = Image.open(encrypted_image_name)
     p2 = np.asarray(im3)
     p2 = p2.copy()
-    p2,text = unmerge(p2)
-    p2 = image_decrypt(p2)
-    text = decrypt(text,key)
-    print(text)
+    if mode == 0:
+        p2,text = unmerge(p2)
+        p2 = image_decrypt(p2)
+        text = decrypt(text,key)
+        print(text)
+    elif mode == 1:
+        p2 = image_decrypt(p2)
+    elif mode == 2:
+        p2,text = unmerge(p2)
+        text = decrypt(text,key)
+        print(text)
+    else:
+        print("error encrypt mode select input")
+    
     im4 = Image.fromarray(p2, mode="RGB")
     decryption_image_name = os.path.join(dirtemp,"decryption_final"+".png")
     im4.save(decryption_image_name)
@@ -147,88 +169,8 @@ def btn_encrypt():
     im4_label = ImageTk.PhotoImage(im4_label)
     label = tk.Label(top,text="decrypted Image :").grid(column=1,row=0)
     label4= tk.Label(top,image=im4_label).grid(column=1,row=1)
-    label = tk.Label(top,text="secret message: "+msg+"\ncipher key: "+key+"\ndecrypted text: "+text).grid(column=1,row=3)
-
-def btn_encrypt_dna():
-    top = tk.Toplevel()
-    global im1,im2,im1_label,im2_label,im4_label
-    # encryption::::::::::::::::::::::::::::::::::::::::::::::::::
-    loc = select_file()
-    im1_label = Image.open(loc)
-    im1_label = im1_label.resize((400,300))
-    im1_label = ImageTk.PhotoImage(im1_label)
-    label2 = tk.Label(top,image=im1_label).grid(column=0,row=1)
-    label = tk.Label(top,text="original Image :").grid(column=0,row=0)
-    im1 = Image.open(loc)
-    p1 = np.asarray(im1) 
-    test = image_encrypt(p1)
-    im2 = Image.fromarray(test, mode="RGB")
-    dirtemp = os.path.dirname(__file__)
-    encrypted_image_name = os.path.join(dirtemp,"encrypted_img_dna"+".png")
-    im2.save(encrypted_image_name)
-    im2_label = Image.open(encrypted_image_name)
-    im2_label = im2_label.resize((400,300))
-    im2_label = ImageTk.PhotoImage(im2_label)
-    label3 = tk.Label(top,image=im2_label).grid(column=0,row=3)
-    label = tk.Label(top,text="encrypted Image :").grid(column=0,row=2)
-
-    # decreption::::::::::::::::::::::::::::::::::::::::::::
-    im3 = Image.open(encrypted_image_name)
-    p2 = np.asarray(im3)
-    p2 = p2.copy()
-    p2 = image_decrypt(p2)
-    im4 = Image.fromarray(p2, mode="RGB")
-    decryption_image_name = os.path.join(dirtemp,"decryption_final_dna"+".png")
-    im4.save(decryption_image_name)
-    im4_label = Image.open(decryption_image_name)
-    im4_label = im4_label.resize((400,300))
-    im4_label = ImageTk.PhotoImage(im4_label)
-    label = tk.Label(top,text="decrypted Image :").grid(column=1,row=0)
-    label4= tk.Label(top,image=im4_label).grid(column=1,row=1)
-
-def btn_encrypt_secret_txt():
-    top = tk.Toplevel()
-    global im1,im2,im1_label,im2_label,im4_label
-    # encryption::::::::::::::::::::::::::::::::::::::::::::::::::
-    loc = select_file()
-    im1_label = Image.open(loc)
-    im1_label = im1_label.resize((400,300))
-    im1_label = ImageTk.PhotoImage(im1_label)
-    label2 = tk.Label(top,image=im1_label).grid(column=0,row=1)
-    label = tk.Label(top,text="original Image :").grid(column=0,row=0)
-    im1 = Image.open(loc)
-    p1 = np.asarray(im1)
-    p1 = p1.copy()
-    msg = enrty_1.get()
-    key = enrty_2.get()
-    cipher = encrypt(msg,key)
-    test = merge(p1,cipher)
-    im2 = Image.fromarray(test, mode="RGB")
-    dirtemp = os.path.dirname(__file__)
-    encrypted_image_name = os.path.join(dirtemp,"encrypted_img_scrtxt"+".png")
-    im2.save(encrypted_image_name)
-    im2_label = Image.open(encrypted_image_name)
-    im2_label = im2_label.resize((400,300))
-    im2_label = ImageTk.PhotoImage(im2_label)
-    label3 = tk.Label(top,image=im2_label).grid(column=0,row=3)
-    label = tk.Label(top,text="encrypted Image :").grid(column=0,row=2)
-
-    # decreption::::::::::::::::::::::::::::::::::::::::
-    im3 = Image.open(encrypted_image_name)
-    p2 = np.asarray(im3)
-    p2 = p2.copy()
-    p2,text = unmerge(p2)
-    text = decrypt(text,key)
-    print(text)
-    im4 = Image.fromarray(p2, mode="RGB")
-    decryption_image_name = os.path.join(dirtemp,"decryption_final_srtxt"+".png")
-    im4.save(decryption_image_name)
-    im4_label = Image.open(decryption_image_name)
-    im4_label = im4_label.resize((400,300))
-    im4_label = ImageTk.PhotoImage(im4_label)
-    label = tk.Label(top,text="decrypted Image :").grid(column=1,row=0)
-    label4= tk.Label(top,image=im4_label).grid(column=1,row=1)
-    label = tk.Label(top,text="secret message: "+msg+"\ncipher key: "+key+"\ndecrypted text: "+text).grid(column=1,row=3)
+    if mode == 0 or 2:
+        label = tk.Label(top,text="secret message: "+msg+"\ncipher key: "+key+"\ndecrypted text: "+text).grid(column=1,row=3)
 
 
     
@@ -249,11 +191,11 @@ enrty_2= tk.Entry(root,width=40)
 enrty_2.grid(column=0)
 mylabel = tk.Label(root, text="Select an image to be encrypted")
 mylabel.grid(column=0,pady=5)
-button1 = tk.Button(root, text="Encrypt", padx= 30, command=btn_encrypt)
+button1 = tk.Button(root, text="Encrypt", padx= 30, command=lambda: btn_encrypt(0))
 button1.grid(column=0)
-button2 = tk.Button(root, text="Encrypt(DNA only)", padx= 30, command=btn_encrypt_dna)
+button2 = tk.Button(root, text="Encrypt(DNA only)", padx= 30, command=lambda: btn_encrypt(1))
 button2.grid(column=0)
-button2 = tk.Button(root, text="Encrypt(secret text only)", padx= 30, command=btn_encrypt_secret_txt)
+button2 = tk.Button(root, text="Encrypt(secret text only)", padx= 30, command=lambda: btn_encrypt(2))
 button2.grid(column=0)
 
 
