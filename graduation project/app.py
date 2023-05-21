@@ -11,7 +11,7 @@ import os
 def merge(image,text):
     # using the magic(4) in matlab to create a matrix each value in that matrix determine how far is the next pixel in the merging technique
     text += "jjjjj"
-    print("dodo:",text)
+    # print("dodo:",text)
     key_matrix = np.array([16,2,3,13,5,11,10,8,9,7,6,12,4,14,15,1])    
     cols = image.shape[1]
     rows = image.shape[0]
@@ -137,13 +137,52 @@ def btn_encrypt(mode):
         p2,text = unmerge(p2)
         p2 = image_decrypt(p2)
         text = decrypt(text,key)
-        print(text)
+        # print(text)
     elif mode == 1:
         p2 = image_decrypt(p2)
     elif mode == 2:
         p2,text = unmerge(p2)
         text = decrypt(text,key)
-        print(text)
+        # print(text)
+    else:
+        print("error encrypt mode select input")
+    
+    im4 = Image.fromarray(p2, mode="RGB")
+    decryption_image_name = os.path.join(dirtemp,"decryption_final"+".png")
+    im4.save(decryption_image_name)
+    im4_label = Image.open(decryption_image_name)
+    im4_label = im4_label.resize((400,300))
+    im4_label = ImageTk.PhotoImage(im4_label)
+    def decrypt_show(mode):
+        label = tk.Label(top,text="decrypted Image :").grid(column=1,row=0)
+        label4= tk.Label(top,image=im4_label).grid(column=1,row=1)
+        if mode == 0 or 2:
+            label = tk.Label(top,text="secret message: "+msg+"\ncipher key: "+key+"\ndecrypted text: "+text).grid(column=1,row=3)
+    button_decrypt = tk.Button(top, text="decrypt", padx= 30, command=lambda: decrypt_show(mode))
+    button_decrypt.grid(column=1,row= 0)
+
+    
+def manual_decrypt(mode):
+    top = tk.Toplevel()
+    global im4_label
+    loc = select_file()
+    key = enrty_2.get()   
+    dirtemp = os.path.dirname(__file__)
+    # decreption::::::::::::::::::::::::::::::::::::::::
+    im3 = Image.open(loc)
+    p2 = np.asarray(im3)
+    p2 = p2.copy()
+    if mode == 0:
+        p2,text = unmerge(p2)
+        p2 = image_decrypt(p2)
+        text = decrypt(text,key)
+        # print(text)
+    elif mode == 1:
+        p2 = image_decrypt(p2)
+    elif mode == 2:
+        p2,text = unmerge(p2)
+        text = decrypt(text,key)
+        # print(text)
     else:
         print("error encrypt mode select input")
     
@@ -156,9 +195,7 @@ def btn_encrypt(mode):
     label = tk.Label(top,text="decrypted Image :").grid(column=1,row=0)
     label4= tk.Label(top,image=im4_label).grid(column=1,row=1)
     if mode == 0 or 2:
-        label = tk.Label(top,text="secret message: "+msg+"\ncipher key: "+key+"\ndecrypted text: "+text).grid(column=1,row=3)
-
-
+        label = tk.Label(top,text="cipher key: "+key+"\ndecrypted text: "+text).grid(column=1,row=3)
     
 
 
@@ -181,8 +218,9 @@ button1 = tk.Button(root, text="Encrypt", padx= 30, command=lambda: btn_encrypt(
 button1.grid(column=0)
 button2 = tk.Button(root, text="Encrypt(DNA only)", padx= 30, command=lambda: btn_encrypt(1))
 button2.grid(column=0)
-button2 = tk.Button(root, text="Encrypt(secret text only)", padx= 30, command=lambda: btn_encrypt(2))
-button2.grid(column=0)
-
+button3 = tk.Button(root, text="Encrypt(secret text only)", padx= 30, command=lambda: btn_encrypt(2))
+button3.grid(column=0)
+button4 = tk.Button(root, text="manual decryption", padx= 30, command=lambda: manual_decrypt(0))
+button4.grid(column=0)
 
 root.mainloop()

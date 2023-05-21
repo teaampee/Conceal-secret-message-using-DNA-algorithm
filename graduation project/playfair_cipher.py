@@ -226,18 +226,18 @@ def encrypt(text_Plain,key):
         PlainTextList[-1] = PlainTextList[-1]+'z'
 
 
-    print("Key text:", key)
+    # print("Key text:", key)
     key = lowerCase(key)
     key = key.replace("j","i")
     Matrix = generateKeyTable(key)
 
-    print("Plain Text:", text_Plain)
+    # print("Plain Text:", text_Plain)
     CipherList = encryptByPlayfairCipher(Matrix, PlainTextList)
 
     CipherText = ""
     for i in CipherList:
         CipherText += i
-    print("CipherText:", CipherText)
+    # print("CipherText:", CipherText)
     return CipherText
 
 def decrypt(cipherText,key):
@@ -245,11 +245,11 @@ def decrypt(cipherText,key):
     cipherTextList = Diagraph(cipherText)
 
 
-    print("Key text:", key)
+    # print("Key text:", key)
     key = lowerCase(key)
     Matrix = generateKeyTable(key)
 
-    print("cipher Text:", cipherText)
+    # print("cipher Text:", cipherText)
     PlainTextList = decryptByPlayfairCipher(Matrix, cipherTextList)
 
   
@@ -261,7 +261,7 @@ def decrypt(cipherText,key):
     plainText = rmFillerLetter(plainText)
     if plainText[-1] == 'z':
         plainText = plainText[:-1]
-    print("plainText:", plainText)
+    # print("plainText:", plainText)
     return plainText
 
 
