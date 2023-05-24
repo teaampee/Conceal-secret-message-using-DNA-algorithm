@@ -14,31 +14,35 @@ def eightbitbinary(x):
 # transforms the 8 bits binary number into DNA encryption string
 # where (00 = a,01 = t,10 = g,11 = c ),, so for example:
 # 00000011 => 00,00,00,11 => a,a,a,c => aaac
-def bits2dna(x):
+
+# dna_encrypion_rule_set
+dna_rule = [["00","11","01","10"],["00","11","10","01"],["01","10","00","11"],["01","10","11","00"],["10","01","00","11"],["10","01","11","00"],["11","00","01","10"],["11","00","10","01"]]
+def bits2dna(x,r):
+
     dna=""
     for i in range(0,8,2):
-        if x[i] + x[i+1] == "00" :
+        if x[i] + x[i+1] == dna_rule[r][0] :
             dna += "a"
-        elif x[i] + x[i+1] == "01" :
+        elif x[i] + x[i+1] == dna_rule[r][1] :
             dna += "t"
-        elif x[i] + x[i+1] == "10" :
+        elif x[i] + x[i+1] == dna_rule[r][2] :
             dna += "g"
         else :
             dna += "c"
     
     return dna
 # transorm the DNA string back into an integer
-def dna2int(x):
+def dna2int(x,r):
     num = ""
     for i in range(4):
         if x[i]  == "a" :
-            num = num + "00"
+            num = num + dna_rule[r][0]
         elif x[i]  == "t" :
-            num = num + "01"
+            num = num + dna_rule[r][1]
         elif x[i]  == "g" :
-            num = num + "10"
+            num = num + dna_rule[r][2]
         elif x[i] == "c" :
-            num = num + "11"
+            num = num + dna_rule[r][3]
         else:
             num = num + "10"
     
@@ -71,22 +75,29 @@ def dna_complement(x):
 # for every letter in the string it we get its numeric value in ASCII using ord()
 # and we put these 4 numbers as seperate value for RGB in 4 neighboring pixels in the new array
 
-def image_encrypt(im):
+def image_encrypt(im,skey):
+    
+    rule = eightbitbinary(skey)
+    rule = rule[5:8]
+    rule = int(rule,2)
     temp = np.zeros((im.shape[0]*2,im.shape[1]*2,im.shape[2]),np.uint8)
     for i in range(0,im.shape[0]):
         for j in range(0,im.shape[1]):
             temprgb = im[i,j]
             r = temprgb[0]
+            r = r ^ skey
             r = eightbitbinary(r)
-            r = bits2dna(r)
+            r = bits2dna(r,rule)
             r = dna_complement(r)
             g = temprgb[1]
+            g = g ^ skey
             g = eightbitbinary(g)
-            g = bits2dna(g)
+            g = bits2dna(g,rule)
             g = dna_complement(g)
             b = temprgb[2]  
+            b = b ^ skey
             b = eightbitbinary(b)
-            b = bits2dna(b)
+            b = bits2dna(b,rule)
             b = dna_complement(b)
             temp[i*2,j*2]= (ord(r[0]),ord(g[0]),ord(b[0]))
             temp[i*2+1,j*2]= (ord(r[1]),ord(g[1]),ord(b[1]))
@@ -99,7 +110,11 @@ def image_encrypt(im):
 # transform them back into letters
 # adds them back into a string 
 # then transform them back into integers using the dna2int() function
-def image_decrypt(im):
+def image_decrypt(im,skey):
+    rule = eightbitbinary(skey)
+    rule = rule[5:8]
+    rule = int(rule,2)
+
     temp = np.zeros((int(im.shape[0]/2),int(im.shape[1]/2),im.shape[2]),np.uint8)
     for i in range(0,im.shape[0],2):
         for j in range(0,im.shape[1],2):
@@ -121,9 +136,12 @@ def image_decrypt(im):
             b = b + chr(im[i,j+1,2])
             b = b + chr(im[i+1,j+1,2]) 
             b = dna_complement(b)
-            r = dna2int(r)
-            g = dna2int(g)
-            b = dna2int(b)
+            r = dna2int(r,rule)
+            r = r ^ skey
+            g = dna2int(g,rule)
+            g = g ^ skey
+            b = dna2int(b,rule)
+            b = b ^ skey
             temp[int(i/2),int(j/2)] = (r,g,b)
     return temp
 
