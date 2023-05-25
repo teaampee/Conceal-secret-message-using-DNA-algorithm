@@ -21,13 +21,13 @@ def merge(image,text,skey):
     skey = eightbitbinary(skey)
     skey = skey[5:8]
     skey = int(skey,2)
-    print(skey)
+    # print(skey)
     # using the magic(4) in matlab to create a matrix each value in that matrix determine how far is the next pixel in the merging technique
     text += "jjjjj"
     # print("dodo:",text)
     key_array =  stego_key_matrixes[skey]
     key_array_len = len(key_array)
-    print(key_array_len)
+    # print(key_array_len)
     cols = image.shape[1]
     rows = image.shape[0]
     text_length = len(text)
@@ -71,20 +71,25 @@ def unmerge(image,skey):
     skey = eightbitbinary(skey)
     skey = skey[5:8]
     skey = int(skey,2)
-    print(skey)
+    # print(skey)
     j_count = 0
     key_array = stego_key_matrixes[skey] 
     key_array_len = len(key_array)
-    print(key_array_len)
+    # print(key_array_len)
     cols = image.shape[1]
+    rows = image.shape[0]
     text= ""
     position = 0
     i = 0
-    while True:   
+    row = 0
+    col = 0
+    while True :   
         s = i% key_array_len
         position += key_array[s]
         row = int(position / cols)
         col = position % cols
+        if row > rows-1 :
+            return image,text
         char = ""
         temp = eightbitbinary(image[row,col,0])
         char += temp[6:8]
